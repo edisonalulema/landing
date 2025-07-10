@@ -5,7 +5,6 @@ const Navbar = () => {
   const navItems = [
     { name: 'Features', path: '/features' },
     { name: 'About', path: '/about' },
-    { name: 'Careers', path: '/careers' },
   ]
   return (
     <nav>

@@ -6,7 +6,6 @@ import {
   TrendingUp, 
   Users, 
   Award,
-  Download
 } from 'lucide-react'
 
 const Home = () => {
