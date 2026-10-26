@@ -1,0 +1,197 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { principles, services } from '../data/site';
+
+const notUs = [
+  ['Account managers between you and the engineers', 'Direct access to the people writing your code'],
+  ['A proposal that changes once the contract is signed', 'A fixed-price scoping sprint and a written plan'],
+  ['Monthly status decks', 'Working software at a weekly demo'],
+  ['Proprietary frameworks that lock you in', 'Your repo, your cloud, your IP from day one'],
+  ['Buzzwords first, problem second', 'The simplest thing that solves the problem'],
+];
+---
+
+<Base
+  title="About"
+  description="Algopop is an independent, senior-only software engineering studio based in the US, building custom software, AI, mobile, and ERP systems."
+>
+  <PageHero
+    eyebrow="About"
+    title="Engineers first."
+    accent="Consultants second."
+    lede="Algopop is an independent software studio. We started it because we kept watching good ideas get lost between sales teams, slide decks, and handoffs to whoever was on the bench. So we built the opposite."
+  />
+
+  <section class="section">
+    <div class="container story">
+      <div class="story__text" data-reveal>
+        <span class="eyebrow">Our story</span>
+        <h2 class="h2">Small on <span class="serif">purpose.</span></h2>
+        <p class="lede">
+          We are a deliberately small team of senior engineers. We take on a handful of clients at a time so each one gets
+          our full attention, and the people you meet on the first call are the people who do the work.
+        </p>
+        <p class="lede">
+          Our work spans {services.length} practices, from real-time voice AI to ERP migrations, because real businesses
+          don’t have problems that fit neatly into one box. What ties it together is a bias for shipping: working software
+          in production, documented well enough that you never depend on us to keep it running.
+        </p>
+      </div>
+      <dl class="facts" data-reveal style="--delay: 100ms">
+        <div><dt>Based in</dt><dd>United States</dd></div>
+        <div><dt>Clients across</dt><dd>North America</dd></div>
+        <div><dt>Practices</dt><dd>{services.length}</dd></div>
+        <div><dt>Team</dt><dd>Senior only</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="section section--dark">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow" data-reveal>How we’re different</span>
+        <h2 class="h2" data-reveal>What you <span class="serif">won’t</span> get from us.</h2>
+      </div>
+      <div class="compare" role="table" aria-label="Typical agency versus Algopop">
+        <div class="compare__row compare__row--head" role="row">
+          <span role="columnheader">Typical agency</span>
+          <span role="columnheader">Algopop</span>
+        </div>
+        {
+          notUs.map(([them, us], i) => (
+            <div class="compare__row" role="row" data-reveal style={`--delay: ${i * 50}ms`}>
+              <span role="cell" class="compare__them">{them}</span>
+              <span role="cell" class="compare__us">{us}</span>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow" data-reveal>Principles</span>
+        <h2 class="h2" data-reveal>What we <span class="serif">hold to.</span></h2>
+      </div>
+      <ul class="principles">
+        {
+          principles.map((p, i) => (
+            <li data-reveal style={`--delay: ${i * 60}ms`}>
+              <span class="principles__num">{String(i + 1).padStart(2, '0')}</span>
+              <h3 class="h3">{p.title}</h3>
+              <p>{p.body}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <CtaBand title="Want to work together?" />
+</Base>
+
+<style>
+  .story {
+    display: grid;
+    gap: 48px;
+  }
+  .story__text {
+    display: grid;
+    gap: 22px;
+  }
+  .facts {
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--bg-raised);
+    overflow: hidden;
+    align-self: start;
+  }
+  .facts div {
+    padding: 28px 24px;
+    border-bottom: 1px solid var(--line);
+  }
+  .facts div:nth-child(odd) {
+    border-right: 1px solid var(--line);
+  }
+  .facts div:nth-last-child(-n + 2) {
+    border-bottom: 0;
+  }
+  .facts dt {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .facts dd {
+    margin: 8px 0 0;
+    font-size: clamp(22px, 2.4vw, 30px);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+  }
+  @media (min-width: 1000px) {
+    .story {
+      grid-template-columns: 1.4fr 1fr;
+      gap: 72px;
+    }
+  }
+  .compare {
+    border-top: 1px solid var(--line);
+  }
+  .compare__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    padding: 22px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .compare__row--head span {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .compare__them {
+    color: var(--ink-3);
+    text-decoration: line-through;
+    text-decoration-color: rgba(255, 74, 28, 0.6);
+  }
+  .compare__us {
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  .principles {
+    display: grid;
+    gap: 16px;
+  }
+  .principles li {
+    display: grid;
+    gap: 12px;
+    padding: 32px 28px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--bg-raised);
+  }
+  .principles__num {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--accent);
+  }
+  .principles p {
+    color: var(--ink-2);
+  }
+  @media (min-width: 760px) {
+    .principles {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>

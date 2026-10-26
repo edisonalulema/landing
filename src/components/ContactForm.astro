@@ -1,0 +1,217 @@
+---
+import Arrow from './Arrow.astro';
+import { site } from '../data/site';
+---
+
+<!--
+  Posts straight to the existing Brevo form. Brevo allows cross-origin requests from algopop.app
+  and answers ?isAjax=1 with JSON, so we only show success once Brevo confirms it.
+  Without JS the form still submits normally to Brevo's own page.
+-->
+<div class="contact-form card" data-contact data-email={site.email}>
+  <form action={site.brevoAction} method="POST" novalidate data-contact-form>
+    <div class="field">
+      <label for="NAME">Name</label>
+      <input id="NAME" name="NAME" type="text" maxlength="200" autocomplete="name" required />
+    </div>
+    <div class="field">
+      <label for="EMAIL">Work email</label>
+      <input id="EMAIL" name="EMAIL" type="email" autocomplete="email" required />
+    </div>
+    <div class="field">
+      <label for="SMS">Phone <span class="optional">optional · US/Canada</span></label>
+      <input id="SMS" name="SMS" type="tel" autocomplete="tel-national" inputmode="tel" />
+      <input type="hidden" name="SMS__COUNTRY_CODE" value="+1" data-country />
+    </div>
+    <div class="field">
+      <label for="MESSAGE">What are you trying to build or fix?</label>
+      <textarea id="MESSAGE" name="MESSAGE" rows="4" maxlength="200" required
+        placeholder="A sentence or two is plenty. We’ll dig into the details on the call."></textarea>
+      <span class="counter" aria-live="polite" data-counter>0 / 200</span>
+    </div>
+
+    <!-- Brevo honeypot and locale -->
+    <input type="text" name="email_address_check" value="" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+    <input type="hidden" name="locale" value="en" />
+
+    <p class="error" role="alert" hidden data-error></p>
+
+    <button type="submit" class="btn btn--primary" data-submit>Send message <Arrow /></button>
+    <p class="fine">
+      Prefer email? Write to <a href={`mailto:${site.email}`}>{site.email}</a>.
+    </p>
+  </form>
+
+  <div class="success" hidden data-success tabindex="-1">
+    <span class="success__icon" aria-hidden="true"></span>
+    <h2 class="h3">Message sent. Thank you.</h2>
+    <p>We read every message ourselves and will reply by email shortly to set up a time to talk.</p>
+  </div>
+
+</div>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-contact]')!;
+  const form = root.querySelector<HTMLFormElement>('[data-contact-form]')!;
+  const error = root.querySelector<HTMLElement>('[data-error]')!;
+  const success = root.querySelector<HTMLElement>('[data-success]')!;
+  const submit = root.querySelector<HTMLButtonElement>('[data-submit]')!;
+  const message = form.elements.namedItem('MESSAGE') as HTMLTextAreaElement;
+  const counter = root.querySelector<HTMLElement>('[data-counter]')!;
+  const submitLabel = submit.innerHTML;
+  const fallback = `Something went wrong sending your message. Please email us at ${root.dataset.email}.`;
+
+  message.addEventListener('input', () => {
+    counter.textContent = `${message.value.length} / ${message.maxLength}`;
+  });
+
+  const showError = (text: string) => {
+    error.textContent = text;
+    error.hidden = false;
+  };
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    error.hidden = true;
+    if (!form.checkValidity()) {
+      showError('Please add your name, a valid email, and a short note about your project.');
+      form.querySelector<HTMLElement>(':invalid')?.focus();
+      return;
+    }
+
+    const data = new FormData(form);
+    // Only send the phone fields when a number was given.
+    if (!String(data.get('SMS') ?? '').trim()) {
+      data.delete('SMS');
+      data.delete('SMS__COUNTRY_CODE');
+    }
+
+    submit.disabled = true;
+    submit.textContent = 'Sending…';
+    try {
+      const res = await fetch(`${form.action}?isAjax=1`, { method: 'POST', body: data });
+      const body = (await res.json().catch(() => ({}))) as { success?: boolean; message?: string };
+      if (!res.ok || !body.success) throw new Error(body.message || fallback);
+      form.hidden = true;
+      success.hidden = false;
+      success.focus();
+    } catch (err) {
+      showError(err instanceof Error && err.message !== 'Failed to fetch' ? err.message : fallback);
+    } finally {
+      submit.disabled = false;
+      submit.innerHTML = submitLabel;
+    }
+  });
+</script>
+
+<style>
+  .contact-form {
+    padding: clamp(24px, 4vw, 40px);
+  }
+  form {
+    display: grid;
+    gap: 20px;
+  }
+  .field {
+    position: relative;
+    display: grid;
+    gap: 8px;
+  }
+  label {
+    font-size: 14.5px;
+    font-weight: 500;
+  }
+  .optional {
+    font-weight: 400;
+    color: var(--ink-3);
+    margin-left: 6px;
+  }
+  input,
+  textarea {
+    width: 100%;
+    font: inherit;
+    font-size: 16px;
+    color: var(--ink);
+    background: var(--bg);
+    border: 1px solid var(--line-strong);
+    border-radius: 12px;
+    padding: 13px 15px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  textarea {
+    resize: vertical;
+    min-height: 120px;
+  }
+  input:focus,
+  textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 18%, transparent);
+  }
+  ::placeholder {
+    color: var(--ink-3);
+  }
+  .counter {
+    justify-self: end;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ink-3);
+  }
+  .hp {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+  }
+  .error {
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: var(--accent-soft);
+    color: var(--ink);
+    font-size: 14.5px;
+  }
+  button[disabled] {
+    opacity: 0.7;
+    cursor: progress;
+  }
+  .fine {
+    font-size: 14px;
+    color: var(--ink-3);
+  }
+  .fine a {
+    color: var(--ink);
+    border-bottom: 1px solid var(--line-strong);
+  }
+  .success {
+    display: grid;
+    gap: 14px;
+    justify-items: start;
+    padding: 24px 0;
+    outline: none;
+  }
+  .success[hidden] {
+    display: none;
+  }
+  .success p {
+    color: var(--ink-2);
+  }
+  .success__icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--accent);
+    position: relative;
+  }
+  .success__icon::after {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 15px;
+    width: 18px;
+    height: 10px;
+    border-left: 2.5px solid #fff;
+    border-bottom: 2.5px solid #fff;
+    transform: rotate(-45deg);
+  }
+</style>

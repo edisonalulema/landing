@@ -1,2 +1,4 @@
-   node_modules/
-   .cache/
+node_modules/
+.astro/
+dist/
+.DS_Store
