@@ -4,11 +4,11 @@ import { site } from '../data/site';
 ---
 
 <!--
-  Posts straight to the existing Brevo form. Brevo allows cross-origin requests from algopop.app
-  and answers ?isAjax=1 with JSON, so we only show success once Brevo confirms it.
-  Without JS the form still submits normally to Brevo's own page.
+  Sends each message two ways: Web3Forms emails it to site.email, and the existing Brevo form saves
+  the sender as a contact. Both allow cross-origin requests and answer with JSON, so we show success
+  once either confirms. Without JS the form still submits normally to Brevo's own page.
 -->
-<div class="contact-form card" data-contact data-email={site.email}>
+<div class="contact-form card" data-contact data-email={site.email} data-w3f={site.web3formsKey}>
   <form action={site.brevoAction} method="POST" novalidate data-contact-form>
     <div class="field">
       <label for="NAME">Name</label>
@@ -65,6 +65,28 @@ import { site } from '../data/site';
     counter.textContent = `${message.value.length} / ${message.maxLength}`;
   });
 
+  // Both services reply with { success, message }; anything else counts as a failure.
+  const post = async (url: string, body: FormData) => {
+    const res = await fetch(url, { method: 'POST', body, headers: { Accept: 'application/json' } });
+    const json = (await res.json().catch(() => ({}))) as { success?: boolean; message?: string };
+    if (!res.ok || !json.success) throw new Error(json.message || fallback);
+  };
+
+  // Web3Forms payload: the email lands in site.email, and replying goes straight to the sender.
+  const email = (data: FormData) => {
+    const name = String(data.get('NAME') ?? '');
+    const out = new FormData();
+    out.set('access_key', root.dataset.w3f!);
+    out.set('subject', `New enquiry from ${name} via algopop.app`);
+    out.set('from_name', 'algopop.app contact form');
+    out.set('name', name);
+    out.set('email', String(data.get('EMAIL') ?? ''));
+    if (data.has('SMS')) out.set('phone', `+1 ${data.get('SMS')}`);
+    out.set('message', String(data.get('MESSAGE') ?? ''));
+    out.set('botcheck', String(data.get('email_address_check') ?? ''));
+    return out;
+  };
+
   const showError = (text: string) => {
     error.textContent = text;
     error.hidden = false;
@@ -89,9 +111,10 @@ import { site } from '../data/site';
     submit.disabled = true;
     submit.textContent = 'Sending…';
     try {
-      const res = await fetch(`${form.action}?isAjax=1`, { method: 'POST', body: data });
-      const body = (await res.json().catch(() => ({}))) as { success?: boolean; message?: string };
-      if (!res.ok || !body.success) throw new Error(body.message || fallback);
+      const sends = [post(`${form.action}?isAjax=1`, data)];
+      if (root.dataset.w3f) sends.push(post('https://api.web3forms.com/submit', email(data)));
+      const results = await Promise.allSettled(sends);
+      if (!results.some((r) => r.status === 'fulfilled')) throw (results[0] as PromiseRejectedResult).reason;
       form.hidden = true;
       success.hidden = false;
       success.focus();

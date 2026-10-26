@@ -8,7 +8,9 @@ export const site = {
   tagline: 'Senior software & AI engineering studio',
   description:
     'Algopop is a senior engineering studio that designs and builds custom software, AI integrations, mobile apps, and ERP systems for growing businesses across North America.',
-  // Existing Brevo form; the contact form posts here directly.
+  // Web3Forms access key: emails each contact-form message to `email`. Public by design.
+  web3formsKey: 'b6eb070d-7910-4855-acb7-6995dc376422',
+  // Existing Brevo form; the contact form also saves each sender here as a contact.
   brevoAction:
     'https://87eee03b.sibforms.com/serve/MUIFAFsVi52UNNWmYpFFLqWEYMTCD5KPFrrvvbsvRVpkScrh_wCHITJBmbwAAz6yAzw3YzADoOGpl2ONwSCNCRg4XadhZqlmDtq-dy40ETkrniyqEf7zVGP8DFCldHUvd0US2lel0nOGPN10gDQiwcD1GhWPMgmpb0U20NWmYSgKuqBzw2JfWh079IboqmAM3y-X07QzaV13vZWY',
 };
