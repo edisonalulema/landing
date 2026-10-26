@@ -1,0 +1,47 @@
+---
+interface Props {
+  eyebrow: string;
+  title: string;
+  accent?: string;
+  lede?: string;
+}
+const { eyebrow, title, accent, lede } = Astro.props;
+---
+
+<section class="page-hero">
+  <div class="grid-bg page-hero__grid" aria-hidden="true"></div>
+  <div class="container page-hero__inner">
+    <span class="eyebrow" data-reveal="load">{eyebrow}</span>
+    <h1 class="display" data-reveal="load" style="--delay: 60ms">
+      {title}{accent && <> <span class="serif">{accent}</span></>}
+    </h1>
+    {lede && <p class="lede" data-reveal="load" style="--delay: 120ms">{lede}</p>}
+    <slot />
+  </div>
+</section>
+
+<style>
+  .page-hero {
+    position: relative;
+    padding: clamp(56px, 9vw, 120px) 0 clamp(48px, 7vw, 96px);
+    border-bottom: 1px solid var(--line);
+    overflow: hidden;
+  }
+  .page-hero__grid {
+    position: absolute;
+    inset: 0;
+    opacity: 0.7;
+  }
+  .page-hero__inner {
+    position: relative;
+    display: grid;
+    gap: 24px;
+  }
+  .page-hero h1 {
+    max-width: 16ch;
+    font-size: clamp(44px, 6.6vw, 84px);
+  }
+  .page-hero .serif {
+    color: var(--accent);
+  }
+</style>

@@ -1,0 +1,133 @@
+---
+import Base from '../layouts/Base.astro';
+import ContactForm from '../components/ContactForm.astro';
+import { site } from '../data/site';
+
+const next = [
+  { title: 'We reply personally', body: 'A senior engineer reads your note and replies by email to find a time.' },
+  { title: '30-minute intro call', body: 'Free and no-pressure. We dig into the problem and tell you honestly if we’re a fit.' },
+  { title: 'A clear next step', body: 'If it makes sense, we propose a fixed-price scoping sprint with a written plan and quote.' },
+];
+---
+
+<Base title="Contact" description="Book a free 30-minute intro call with Algopop to talk through your software, AI, mobile, or ERP project.">
+  <section class="contact">
+    <div class="grid-bg contact__grid" aria-hidden="true"></div>
+    <div class="container contact__inner">
+      <div class="contact__copy">
+        <span class="eyebrow" data-reveal="load">Contact</span>
+        <h1 class="display" data-reveal="load" style="--delay: 60ms">Let’s talk about <span class="serif">your project.</span></h1>
+        <p class="lede" data-reveal="load" style="--delay: 120ms">
+          Tell us a little about what you’re working on. You’ll hear back from an engineer, not a sales team.
+        </p>
+
+        <ol class="next" data-reveal="load" style="--delay: 180ms">
+          {
+            next.map((n, i) => (
+              <li>
+                <span class="next__num">{i + 1}</span>
+                <div>
+                  <h2>{n.title}</h2>
+                  <p>{n.body}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+
+        <div class="direct" data-reveal="load" style="--delay: 220ms">
+          <span class="eyebrow">Or reach us directly</span>
+          <a href={`mailto:${site.email}`}>{site.email}</a>
+        </div>
+      </div>
+
+      <div data-reveal="load" style="--delay: 140ms">
+        <ContactForm />
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .contact {
+    position: relative;
+    overflow: hidden;
+    padding: clamp(48px, 8vw, 104px) 0 var(--section);
+  }
+  .contact__grid {
+    position: absolute;
+    inset: 0;
+  }
+  .contact__inner {
+    position: relative;
+    display: grid;
+    gap: 48px;
+  }
+  .contact__copy {
+    display: grid;
+    gap: 26px;
+    align-content: start;
+  }
+  .contact h1 {
+    font-size: clamp(44px, 6vw, 80px);
+    max-width: 12ch;
+  }
+  .contact h1 .serif {
+    color: var(--accent);
+  }
+  .next {
+    list-style: none;
+    margin: 12px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 20px;
+  }
+  .next li {
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    gap: 14px;
+  }
+  .next__num {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    border: 1px solid var(--line-strong);
+    background: var(--bg-raised);
+  }
+  .next h2 {
+    font-size: 17px;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+    margin-bottom: 4px;
+  }
+  .next p {
+    color: var(--ink-2);
+    font-size: 15.5px;
+  }
+  .direct {
+    display: grid;
+    gap: 10px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+  }
+  .direct a {
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    width: fit-content;
+    border-bottom: 1px solid var(--line-strong);
+  }
+  .direct a:hover {
+    border-color: var(--accent);
+  }
+  @media (min-width: 1000px) {
+    .contact__inner {
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+    }
+  }
+</style>

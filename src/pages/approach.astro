@@ -1,0 +1,192 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { process, engagements, faq } from '../data/site';
+---
+
+<Base
+  title="Approach"
+  description="How Algopop works: a free intro call, a fixed-price scoping sprint, weekly demos, and three engagement models with no surprises on cost."
+>
+  <PageHero
+    eyebrow="Approach"
+    title="No black boxes."
+    accent="No surprises."
+    lede="Software projects fail in the gaps: unclear scope, invisible progress, surprise invoices. Our process exists to close those gaps before they open."
+  />
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow" data-reveal>The process</span>
+        <h2 class="h2" data-reveal>Four steps, <span class="serif">every time.</span></h2>
+      </div>
+      <ol class="steps">
+        {
+          process.map((p, i) => (
+            <li class="step" data-reveal style={`--delay: ${i * 60}ms`}>
+              <span class="step__num">{p.step}</span>
+              <div>
+                <h3 class="h3">{p.title}</h3>
+                <span class="step__time">{p.time}</span>
+              </div>
+              <p>{p.body}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="section section--dark">
+    <div class="container">
+      <div class="section-head section-head--split">
+        <div class="stack-sm">
+          <span class="eyebrow" data-reveal>Engagement models</span>
+          <h2 class="h2" data-reveal>Pick the shape that <span class="serif">fits.</span></h2>
+        </div>
+        <p class="lede" data-reveal>
+          Every engagement starts with the same fixed-price scoping sprint. After that, choose how you want to work. You
+          can switch models as your needs change.
+        </p>
+      </div>
+      <div class="models">
+        {
+          engagements.map((e, i) => (
+            <article class="card model" data-reveal style={`--delay: ${i * 80}ms`}>
+              <span class="model__fit">{e.fit}</span>
+              <h3 class="h3">{e.title}</h3>
+              <p>{e.body}</p>
+              <ul class="checklist">
+                {e.points.map((pt) => <li>{pt}</li>)}
+              </ul>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container faq-wrap">
+      <div class="section-head">
+        <span class="eyebrow" data-reveal>FAQ</span>
+        <h2 class="h2" data-reveal>The <span class="serif">fine print,</span> up front.</h2>
+      </div>
+      <div class="faq">
+        {
+          faq.map((f) => (
+            <details data-reveal>
+              <summary>{f.q}</summary>
+              <p>{f.a}</p>
+            </details>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <CtaBand />
+</Base>
+
+<style>
+  .stack-sm {
+    display: grid;
+    gap: 20px;
+  }
+  .steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--line);
+  }
+  .step {
+    display: grid;
+    gap: 14px;
+    padding: 36px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .step__num {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 56px;
+    line-height: 0.9;
+    color: var(--accent);
+  }
+  .step__time {
+    display: inline-block;
+    margin-top: 8px;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--ink-3);
+  }
+  .step p {
+    color: var(--ink-2);
+    max-width: 60ch;
+  }
+  @media (min-width: 900px) {
+    .step {
+      grid-template-columns: 120px 1fr 1.4fr;
+      gap: 40px;
+      align-items: start;
+    }
+  }
+  .models {
+    display: grid;
+    gap: 16px;
+  }
+  .model {
+    display: grid;
+    align-content: start;
+    gap: 16px;
+    padding: 32px 28px;
+  }
+  .model p {
+    color: var(--ink-2);
+  }
+  .model__fit {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    color: var(--accent);
+  }
+  .model .checklist {
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+  }
+  @media (min-width: 900px) {
+    .models {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .faq-wrap {
+    display: grid;
+  }
+  @media (min-width: 1040px) {
+    .faq-wrap {
+      grid-template-columns: 1fr 1.6fr;
+      gap: 72px;
+    }
+  }
+  .faq {
+    border-top: 1px solid var(--line);
+  }
+  .faq details {
+    border-bottom: 1px solid var(--line);
+  }
+  .faq summary {
+    padding: 22px 0;
+    cursor: pointer;
+    font-size: 19px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+  }
+  .faq summary::marker {
+    color: var(--accent);
+  }
+  .faq details p {
+    padding: 0 0 24px;
+    color: var(--ink-2);
+  }
+</style>

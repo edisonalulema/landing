@@ -1,0 +1,27 @@
+---
+interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+---
+
+<span class:list={['logo', className]}>
+  <svg viewBox="0 0 28 28" width="28" height="28" aria-hidden="true">
+    <rect width="28" height="28" rx="8" fill="currentColor"></rect>
+    <circle cx="19" cy="9" r="4" fill="var(--accent)"></circle>
+    <path d="M7 21 L13 9 L17 17" stroke="var(--logo-stroke, var(--bg))" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"></path>
+  </svg>
+  <span class="logo__word">algopop</span>
+</span>
+
+<style>
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 650;
+    font-size: 20px;
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+</style>
